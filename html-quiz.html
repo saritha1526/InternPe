@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML Quiz Game</title>
+  <link rel="stylesheet" href="html-quiz.css" />
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>HTML Quiz</h1>
+    <h2 id="question">Question Text</h2>
+    <div id="answer-buttons" class="btn-grid"></div>
+    <button id="next-btn" onclick="nextQuestion()">Next</button>
+    <div id="result" class="hide">
+      <h2>Quiz Completed!</h2>
+      <p id="score-text"></p>
+      <button onclick="startQuiz()">Play Again</button>
+    </div>
+  </div>
+  <script src="html-quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> G.K Quiz Game</title>
+  <link rel="stylesheet" href="gk-quiz.css">
+</head>
+<body>
+  <div class="quiz-container" id="quiz">
+    <div id="start-screen" class="pink">
+      <h1>Quiz Game</h1>
+      <button class="new" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quiz-box" class="hide">
+      <h2 id="question">Question Text</h2>
+      <div id="answer-buttons" class="btn-grid"></div>
+      <button id="next-btn" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div id="result-screen" class="hide">
+      <h2>Quiz Completed!</h2>
+      <p class="green">Your Score: <span id="score"></span></p>
+      <button  onclick="startQuiz()">Play Again</button>
+    </div>
+  </div>
+
+  <script src="gk-quiz.js"></script>
+</body>
+</html>

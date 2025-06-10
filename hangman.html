@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hangman Game</title>
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: pink;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #hint {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    #word {
+      font-size: 2rem;
+      letter-spacing: 10px;
+      margin: 20px;
+    }
+
+    #keyboard {
+      display: grid;
+      grid-template-columns: repeat(13, 30px);
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .new {
+      color: orange ;
+    }
+
+    #message {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #wrong-letters {
+      color: red;
+      margin-top: 10px;
+    }
+
+    #restart {
+      margin-top: 20px;
+      padding: 10px 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="new">Hangman game </h1>
+  <div id="hint">Hint: </div>
+  <div id="word">_ _ _ _</div>
+  <div id="keyboard"></div>
+  <div id="wrong-letters">Wrong: </div>
+  <div id="message"></div>
+  <button id="restart">Restart Game</button>
+
+  <script>
+    const wordList = [
+      { word: "apple", hint: "A fruit" },
+      { word: "grape", hint: "Small round fruit" },
+      { word: "mango", hint: "Summer fruit" },
+      { word: "peach", hint: "Soft-skinned fruit" },
+      { word: "lemon", hint: "Yellow citrus fruit" },
+      { word: "melon", hint: "Large round fruit" }
+    ];
+
+    const maxWrong = 6;
+    let selectedWord = "";
+    let selectedHint = "";
+    let guessedLetters = [];
+    let wrongGuesses = [];
+    let gameOver = false;
+
+    const wordDiv = document.getElementById('word');
+    const keyboard = document.getElementById('keyboard');
+    const wrongDiv = document.getElementById('wrong-letters');
+    const messageDiv = document.getElementById('message');
+    const restartBtn = document.getElementById('restart');
+    const hintDiv = document.getElementById('hint');
+
+    function setupGame() {
+      const randomEntry = wordList[Math.floor(Math.random() * wordList.length)];
+      selectedWord = randomEntry.word.toUpperCase();
+      selectedHint = randomEntry.hint;
+      guessedLetters = [];
+      wrongGuesses = [];
+      gameOver = false;
+
+      updateHint();
+      updateWord();
+      updateWrong();
+      keyboard.innerHTML = "";
+      messageDiv.textContent = "";
+      restartBtn.style.display = "none";
+
+      for (let i = 65; i <= 90; i++) {
+        const letter = String.fromCharCode(i);
+        const btn = document.createElement("button");
+        btn.textContent = letter;
+        btn.id = `key-${letter}`;
+        btn.addEventListener("click", () => handleGuess(letter));
+        keyboard.appendChild(btn);
+      }
+    }
+
+    function updateHint() {
+      hintDiv.textContent = `Hint: ${selectedHint}`;
+    }
+
+    function updateWord() {
+      wordDiv.textContent = selectedWord
+        .split("")
+        .map(letter => guessedLetters.includes(letter) ? letter : "_")
+        .join(" ");
+    }
+
+    function updateWrong() {
+      wrongDiv.textContent = `Wrong: ${wrongGuesses.join(", ")}`;
+    }
+
+    function handleGuess(letter) {
+      if (gameOver || guessedLetters.includes(letter) || wrongGuesses.includes(letter)) return;
+
+      const isCorrect = selectedWord.includes(letter);
+
+      if (isCorrect) {
+        guessedLetters.push(letter);
+        updateWord();
+        checkWin();
+      } else {
+        wrongGuesses.push(letter);
+        updateWrong();
+        checkLose();
+      }
+
+      const button = document.getElementById(`key-${letter}`);
+      if (button) button.disabled = true;
+    }
+
+    function checkWin() {
+      const won = selectedWord.split("").every(l => guessedLetters.includes(l));
+      if (won) {
+        messageDiv.textContent = "🎉 You Won!";
+        endGame();
+      }
+    }
+
+    function checkLose() {
+      if (wrongGuesses.length >= maxWrong) {
+        revealWord();
+        messageDiv.textContent = "💀 You Lost!";
+        endGame();
+      }
+    }
+
+    function revealWord() {
+      wordDiv.textContent = selectedWord.split("").join(" ");
+    }
+
+    function endGame() {
+      gameOver = true;
+      document.querySelectorAll("#keyboard button").forEach(btn => btn.disabled = true);
+      restartBtn.style.display = "inline-block";
+    }
+
+    restartBtn.addEventListener("click", setupGame);
+
+    // ✅ Keyboard input support
+    window.addEventListener("keydown", (e) => {
+      if (!gameOver && e.key.match(/^[a-zA-Z]$/)) {
+        handleGuess(e.key.toUpperCase());
+      }
+    });
+
+    setupGame();
+  </script>
+
+</body>
+</html>
